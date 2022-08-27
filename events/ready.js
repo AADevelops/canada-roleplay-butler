@@ -6,7 +6,7 @@ module.exports = {
   async execute(client) {
     console.log(`[CRP-Console]: ${client.user.tag} ready.`);
 
-    const guildCommands = await client.guilds.cache.get(GUILD_ID).commands.fetch();
-    console.log(guildCommands);
+    // const guildCommands = await client.guilds.cache.get(GUILD_ID).commands.fetch();
+    // console.log(guildCommands);
   }
 }
