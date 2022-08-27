@@ -19,26 +19,31 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId("tps")
           .setLabel("Toronto Police Service")
+          .setEmoji("👮")
           .setStyle(ButtonStyle.Primary),
 
         new ButtonBuilder()
           .setCustomId("opp")
           .setLabel("Ontario Provincial Police")
+          .setEmoji("👮")
           .setStyle(ButtonStyle.Primary),
 
         new ButtonBuilder()
           .setCustomId("tfs")
           .setLabel("Toronto Fire Service")
+          .setEmoji("👨‍🚒")
           .setStyle(ButtonStyle.Primary),
 
         new ButtonBuilder()
           .setCustomId("staff")
           .setLabel("Staff")
+          .setEmoji("⭐")
           .setStyle(ButtonStyle.Primary),
 
         new ButtonBuilder()
           .setCustomId("business")
           .setLabel("Business")
+          .setEmoji("💵")
           .setStyle(ButtonStyle.Primary)
       );
 
