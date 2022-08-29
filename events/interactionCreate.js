@@ -1,5 +1,5 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, EmbedBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
-const { TPS_APP_REVIEW_CHANNEL, OPP_APP_REVIEW_CHANNEL, TFS_APP_REVIEW_CHANNEL, STAFF_APP_REVIEW_CHANNEL, BUSINESS_APP_REVIEW_CHANNEL, APPLICATION_RESULT_CHANNEL } = require("../config.json");
+const { TPS_APP_REVIEW_CHANNEL, OPP_APP_REVIEW_CHANNEL, RCMP_APP_REVIEW_CHANNEL, TFS_APP_REVIEW_CHANNEL, STAFF_APP_REVIEW_CHANNEL, BUSINESS_APP_REVIEW_CHANNEL, APPLICATION_RESULT_CHANNEL } = require("../config.json");
 
 module.exports = {
   name: "interactionCreate",
@@ -18,9 +18,9 @@ module.exports = {
         return interaction.reply({ content: "[CRP-Console]: Command error, unable to execute.", ephemeral: true });
       }
     } else if (interaction.isButton()) {
-      if (interaction.customId === "tps" || interaction.customId === "opp" || interaction.customId === "tfs" || interaction.customId === "staff" || interaction.customId === "business") {
+      if (interaction.customId === "tps" || interaction.customId === "opp" || interaction.customId === "rcmp" || interaction.customId === "tfs" || interaction.customId === "staff" || interaction.customId === "business") {
         choice = "10";
-        departments = ["TORONTO POLICE", "OPP", "TORONTO FIRE SERVICE", "STAFF", "BUSINESS"];
+        departments = ["TORONTO POLICE", "OPP", "RCMP", "TORONTO FIRE SERVICE", "STAFF", "BUSINESS"];
   
         if (interaction.customId === "tps") {
           var tpsModal = new ModalBuilder()
@@ -34,32 +34,39 @@ module.exports = {
             .setTitle("Ontario Provincial Police Application");
   
           choice = "1";
-        } else if (interaction.customId === "tfs") {
+        } else if (interaction.customId === "rcmp") {
+          var rcmpModal = new ModalBuilder()
+            .setCustomId("rcmpModal")
+            .setTitle("Royal Canadian Mounted Police Application");
+
+          choice = "2";
+        }else if (interaction.customId === "tfs") {
           var tfsModal = new ModalBuilder()
             .setCustomId("tfsModal")
             .setTitle("Toronto Fire Service Application");
   
-          choice = "2";
+          choice = "3";
         } else if (interaction.customId === "staff") {
           var staffModal = new ModalBuilder()
             .setCustomId("staffModal")
             .setTitle("Staff Application");
   
-          choice = "3";
+          choice = "4";
         } else if (interaction.customId === "business") {
           var businessModal = new ModalBuilder()
             .setCustomId("businessModal")
             .setTitle("Business Application");
   
-          choice = "4";
+          choice = "5";
         }
   
         modalSelector = {
           "0": tpsModal,
           "1": oppModal,
-          "2": tfsModal,
-          "3": staffModal,
-          "4": businessModal
+          "2": rcmpModal,
+          "3": tfsModal,
+          "4": staffModal,
+          "5": businessModal
         };
   
         /* GENERAL QUESTIONS */
@@ -157,10 +164,12 @@ module.exports = {
         } else if (choice === "1") {
           oppModal.addComponents(firstActionRow, secondActionRow, thirdActionRow, fifthActionRow, fourthActionRow);
         } else if (choice === "2") {
-          tfsModal.addComponents(firstActionRow, secondActionRow, thirdActionRow, sixthActionRow, fourthActionRow);
+          rcmpModal.addComponents(firstActionRow, secondActionRow, thirdActionRow, fifthActionRow, fourthActionRow);
         } else if (choice === "3") {
-          staffModal.addComponents(firstActionRow, secondActionRow, thirdActionRow, seventhActionRow, eigthActionRow);
+          tfsModal.addComponents(firstActionRow, secondActionRow, thirdActionRow, sixthActionRow, fourthActionRow);
         } else if (choice === "4") {
+          staffModal.addComponents(firstActionRow, secondActionRow, thirdActionRow, seventhActionRow, eigthActionRow);
+        } else if (choice === "5") {
           businessModal.addComponents(ninthActionRow, tenthActionRow, eleventhActionRow, twelfthActionRow, thirteenthActionRow);
         }
   
@@ -171,22 +180,25 @@ module.exports = {
         const acceptedTitles = [
           `Congratulations! Your Toronto Police application has been accepted.`,
           `Congratulations! Your OPP application has been accepted.`,
+          `Congratulations! Your RCMP application has been accepted.`,
           `Congratulations! Your Toronto Fire Service application has been accepted.`,
           `Congratulations! Your staff application has been accepted.`,
           `Congratulations! Your business application has been accepted.`
         ];
 
         const acceptedReplies = [
-          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2]} Congratulations! You must be in the server for at least one month and be active on both discord and the server to continue.`,
-          `${buttonIdSplit[2]} Congratulations! Check out the business docs and instructions on running your business.`
+          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2].toString()} Congratulations! You must be in the server for at least one month and be active on both discord and the server to continue.`,
+          `${buttonIdSplit[2].toString()} Congratulations! Check out the business docs and instructions on running your business.`
         ];
 
         const acceptedImages = [
           "https://cdn.discordapp.com/attachments/934920346476367913/1012767978078601256/19dfa680cf8944872235234115ded5bd.png",
           "https://i.gyazo.com/aab1b3ecbe01083a133f63f8733c5af3.png",
+          "https://cdn.discordapp.com/attachments/934920346476367913/1013809343411527772/e9e3926958a09a4f4f1933bc84ca2abbf81a20681.png",
           "https://i.gyazo.com/cf82259532e7caa4c8478d9bd9b0a76a.png",
           "https://i.gyazo.com/1dbed3c456802917c2a534f754f27c1c.png",
           "https://forum.cfx.re/uploads/default/original/4X/3/c/0/3c09a48bab348783d141b97833d3f18e507c1e90.jpeg"
@@ -195,9 +207,10 @@ module.exports = {
         messagesSelector = {
           "TORONTO POLICE"       : 0,
           "OPP"                  : 1,
-          "TORONTO FIRE SERVICE" : 2,
-          "STAFF"                : 3,
-          "BUSINESS"             : 4
+          "RCMP"                 : 2,
+          "TORONTO FIRE SERVICE" : 3,
+          "STAFF"                : 4,
+          "BUSINESS"             : 5
         }
 
         if (interaction.customId.includes("acceptApplication")) {
@@ -231,7 +244,7 @@ module.exports = {
         }
       }
     } else if (interaction.type === InteractionType.ModalSubmit) {
-      if (interaction.customId === "tpsModal" || interaction.customId === "oppModal" || interaction.customId === "tfsModal" || interaction.customId === "staffModal" || interaction.customId === "businessModal") {
+      if (interaction.customId === "tpsModal" || interaction.customId === "oppModal" || interaction.customId === "rcmpModal" || interaction.customId === "tfsModal" || interaction.customId === "staffModal" || interaction.customId === "businessModal") {
         let responses = [];
         for (let i = 0; i < 5; i++) {
           responses.push(interaction.fields.getTextInputValue((modalSelector[choice].components.map(c => c.components[0].data.custom_id)[i])));
@@ -256,13 +269,13 @@ module.exports = {
         const buttonList = new ActionRowBuilder()
           .addComponents(
             new ButtonBuilder()
-              .setCustomId(`acceptApplication-${departments[choice]}-${interaction.user.toString()}`)
+              .setCustomId(`acceptApplication-${departments[choice]}-${interaction.user}`)
               .setLabel("Approve")
               .setEmoji("✔️")
               .setStyle(ButtonStyle.Success),
             
             new ButtonBuilder()
-              .setCustomId(`denyApplication-${departments[choice]}-${interaction.user.toString()}`)
+              .setCustomId(`denyApplication-${departments[choice]}-${interaction.user}`)
               .setLabel("Deny")
               .setEmoji("✖️")
               .setStyle(ButtonStyle.Danger)
@@ -271,6 +284,7 @@ module.exports = {
         const applicationChannel = {
           "TORONTO POLICE"       : TPS_APP_REVIEW_CHANNEL,
           "OPP"                  : OPP_APP_REVIEW_CHANNEL,
+          "RCMP"                 : RCMP_APP_REVIEW_CHANNEL,
           "TORONTO FIRE SERVICE" : TFS_APP_REVIEW_CHANNEL,
           "STAFF"                : STAFF_APP_REVIEW_CHANNEL,
           "BUSINESS"             : BUSINESS_APP_REVIEW_CHANNEL
@@ -286,22 +300,25 @@ module.exports = {
         const deniedTitles = [
           `Sadly, your Toronto Police application has been denied.`,
           `Sadly, your OPP application has been denied.`,
+          `Sadly, your RCMP application has been denied.`,
           `Sadly, your Toronto Fire Service application has been denied.`,
           `Sadly, your staff application has been denied.`,
           `Sadly, your business application has been denied.`
         ];
 
         const deniedReplies = [
-          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Police.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Ontario Provincial Police.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Fire Services.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Staff.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Business.\n\nReason: ${deniedReason}`
+          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Police.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Ontario Provincial Police.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Royal Canadian Mounted Police.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Fire Services.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Staff.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Business.\n\nReason: ${deniedReason}`
         ];
 
         const deniedImages = [
           "https://i.gyazo.com/109f2327d5fcfcd5e6a38e5f9cf6d0a8.png",
           "https://cdn.discordapp.com/attachments/934920346476367913/1012767977801781288/04322d8e01cb1ac6fe65e6d2f17dfa9e.png",
+          "https://cdn.discordapp.com/attachments/934920346476367913/1013809343013081148/e9e3926958a09a4f4f1933bc84ca2abbf81a2068.png",
           "https://i.gyazo.com/4bbee5b6a84d63f4212737057081a789.png",
           "https://i.gyazo.com/48b5196006dad969d11fbae0bb743947.png",
           "https://forum.cfx.re/uploads/default/original/4X/3/c/0/3c09a48bab348783d141b97833d3f18e507c1e90.jpeg"
