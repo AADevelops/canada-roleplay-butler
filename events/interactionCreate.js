@@ -1,5 +1,6 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, EmbedBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const { TPS_APP_REVIEW_CHANNEL, OPP_APP_REVIEW_CHANNEL, RCMP_APP_REVIEW_CHANNEL, TFS_APP_REVIEW_CHANNEL, STAFF_APP_REVIEW_CHANNEL, BUSINESS_APP_REVIEW_CHANNEL, APPLICATION_RESULT_CHANNEL } = require("../config.json");
+const { TPS_ROLE, TPS_CADET, OPP_ROLE, OPP_CADET, RCMP_ROLE, RCMP_CADET, TFS_ROLE, TFS_CANDIDATE, STAFF_ROLE, STAFF_NI_ROLE, BUSINESS_ROLE, BUSINESS_RANK } = require("../config.json");
 
 module.exports = {
   name: "interactionCreate",
@@ -226,12 +227,12 @@ module.exports = {
           interaction.deleteReply();
 
           const roleGiver = {
-            "TORONTO POLICE"       : "919373155305410610,919373637394522192",
-            "OPP"                  : "880254938733768764,917186134667296828",
-            "RCMP"                 : "928749998097694791,928751141515321404",
-            "TORONTO FIRE SERVICE" : "917153202623901756,917153723367694356",
-            "STAFF"                : "934839253043642388,886614302017060864",
-            "BUSINESS"             : "971741040958648320,971741173863546981"
+            "TORONTO POLICE"       : `${TPS_ROLE},${TPS_CADET}`,
+            "OPP"                  : `${OPP_ROLE},${OPP_CADET}`,
+            "RCMP"                 : `${RCMP_ROLE},${RCMP_CADET}`,
+            "TORONTO FIRE SERVICE" : `${TFS_ROLE},${TFS_CANDIDATE}`,
+            "STAFF"                : `${STAFF_ROLE},${STAFF_NI_ROLE}`,
+            "BUSINESS"             : `${BUSINESS_ROLE},${BUSINESS_RANK}`
           };
 
           const acceptedMember = await interaction.guild.members.fetch(buttonIdSplit[2].substring(2, 20));
