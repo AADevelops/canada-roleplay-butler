@@ -3,7 +3,7 @@ const { TOKEN } = require("./config.json");
 const fs = require("fs");
 const path = require("path");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 client.commands = new Collection();
 
 const eventFiles = fs.readdirSync(path.join(__dirname, "events"));

@@ -187,12 +187,12 @@ module.exports = {
         ];
 
         const acceptedReplies = [
-          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2].toString()} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
-          `${buttonIdSplit[2].toString()} Congratulations! You must be in the server for at least one month and be active on both discord and the server to continue.`,
-          `${buttonIdSplit[2].toString()} Congratulations! Check out the business docs and instructions on running your business.`
+          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2]} Congratulations! Keep an eye out for training ads in your departments conversations channel for training. You will need to attend one to proceed.`,
+          `${buttonIdSplit[2]} Congratulations! You must be in the server for at least one month and be active on both discord and the server to continue.`,
+          `${buttonIdSplit[2]} Congratulations! Check out the business docs and instructions on running your business.`
         ];
 
         const acceptedImages = [
@@ -224,6 +224,24 @@ module.exports = {
 
           interaction.reply("null");
           interaction.deleteReply();
+
+          const roleGiver = {
+            "TORONTO POLICE"       : "919373155305410610,919373637394522192",
+            "OPP"                  : "880254938733768764,917186134667296828",
+            "RCMP"                 : "928749998097694791,928751141515321404",
+            "TORONTO FIRE SERVICE" : "917153202623901756,917153723367694356",
+            "STAFF"                : "934839253043642388,886614302017060864",
+            "BUSINESS"             : "971741040958648320,971741173863546981"
+          };
+
+          const acceptedMember = await interaction.guild.members.fetch(buttonIdSplit[2].substring(2, 20));
+          for (let key in roleGiver) {
+            if (key === buttonIdSplit[1]) {
+              const roles = roleGiver[key].split(",");
+              acceptedMember.roles.add(roles[0]);
+              acceptedMember.roles.add(roles[1]);
+            }
+          }
 
           const applicationResultChannel = interaction.client.channels.cache.get(APPLICATION_RESULT_CHANNEL);
           applicationResultChannel.send({ embeds: [applicationResultMessage] });
@@ -269,13 +287,13 @@ module.exports = {
         const buttonList = new ActionRowBuilder()
           .addComponents(
             new ButtonBuilder()
-              .setCustomId(`acceptApplication-${departments[choice]}-${interaction.user}`)
+              .setCustomId(`acceptApplication-${departments[choice]}-${interaction.user.toString()}`)
               .setLabel("Approve")
               .setEmoji("✔️")
               .setStyle(ButtonStyle.Success),
             
             new ButtonBuilder()
-              .setCustomId(`denyApplication-${departments[choice]}-${interaction.user}`)
+              .setCustomId(`denyApplication-${departments[choice]}-${interaction.user.toString()}`)
               .setLabel("Deny")
               .setEmoji("✖️")
               .setStyle(ButtonStyle.Danger)
@@ -307,12 +325,12 @@ module.exports = {
         ];
 
         const deniedReplies = [
-          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Police.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Ontario Provincial Police.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Royal Canadian Mounted Police.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Fire Services.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Staff.\n\nReason: ${deniedReason}`,
-          `${buttonIdSplit[2].toString()} Feel free to reapply in the #apply-here channel. Thank you for your interest in Business.\n\nReason: ${deniedReason}`
+          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Police.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Ontario Provincial Police.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Royal Canadian Mounted Police.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Toronto Fire Services.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Staff.\n\nReason: ${deniedReason}`,
+          `${buttonIdSplit[2]} Feel free to reapply in the #apply-here channel. Thank you for your interest in Business.\n\nReason: ${deniedReason}`
         ];
 
         const deniedImages = [
