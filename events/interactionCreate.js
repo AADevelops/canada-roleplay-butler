@@ -1,4 +1,4 @@
-const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, EmbedBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError } = require("discord.js");
+const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, EmbedBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, DiscordjsTypeError } = require("discord.js");
 const { TPS_APP_REVIEW_CHANNEL, OPP_APP_REVIEW_CHANNEL, RCMP_APP_REVIEW_CHANNEL, TFS_APP_REVIEW_CHANNEL, STAFF_APP_REVIEW_CHANNEL, BUSINESS_APP_REVIEW_CHANNEL, APPLICATION_RESULT_CHANNEL } = require("../config.json");
 const { TPS_ROLE, TPS_CADET, OPP_ROLE, OPP_CADET, RCMP_ROLE, RCMP_CADET, TFS_ROLE, TFS_CANDIDATE, STAFF_ROLE, STAFF_NI_ROLE, BUSINESS_ROLE, BUSINESS_RANK } = require("../config.json");
 
@@ -270,55 +270,62 @@ module.exports = {
       }
     } else if (interaction.type === InteractionType.ModalSubmit) {
       if (interaction.customId === "tpsModal" || interaction.customId === "oppModal" || interaction.customId === "rcmpModal" || interaction.customId === "tfsModal" || interaction.customId === "staffModal" || interaction.customId === "businessModal") {
-        let responses = [];
-        for (let i = 0; i < 5; i++) {
-          responses.push(interaction.fields.getTextInputValue((modalSelector[choice].components.map(c => c.components[0].data.custom_id)[i])));
+        try {
+          let responses = [];
+          for (let i = 0; i < 5; i++) {
+            responses.push(interaction.fields.getTextInputValue((modalSelector[choice].components.map(c => c.components[0].data.custom_id)[i])));
+          }
+
+          const applicationReviewMessage = new EmbedBuilder()
+            .setColor(0xD63129)
+            .setTitle(`New Application - ${departments[choice]}`)
+            .setThumbnail("https://i.ibb.co/p1K1yKd/Rogues-2021-Red-1.png")
+            .addFields(
+              { name: "Applicant Discord", value: interaction.user.toString() },
+              { name: "Applicant User ID", value: interaction.user.id },
+              { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[0], value: responses[0] },
+              { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[1], value: responses[1] },
+              { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[2], value: responses[2] },
+              { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[3], value: responses[3] },
+              { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[4], value: responses[4] }
+            );
+
+          /* BUTTONS */
+
+          const buttonList = new ActionRowBuilder()
+            .addComponents(
+              new ButtonBuilder()
+                .setCustomId(`acceptApplication-${departments[choice]}-${interaction.user.toString()}`)
+                .setLabel("Approve")
+                .setEmoji("✔️")
+                .setStyle(ButtonStyle.Success),
+              
+              new ButtonBuilder()
+                .setCustomId(`denyApplication-${departments[choice]}-${interaction.user.toString()}`)
+                .setLabel("Deny")
+                .setEmoji("✖️")
+                .setStyle(ButtonStyle.Danger)
+            );
+
+          const applicationChannel = {
+            "TORONTO POLICE"       : TPS_APP_REVIEW_CHANNEL,
+            "OPP"                  : OPP_APP_REVIEW_CHANNEL,
+            "RCMP"                 : RCMP_APP_REVIEW_CHANNEL,
+            "TORONTO FIRE SERVICE" : TFS_APP_REVIEW_CHANNEL,
+            "STAFF"                : STAFF_APP_REVIEW_CHANNEL,
+            "BUSINESS"             : BUSINESS_APP_REVIEW_CHANNEL
+          };
+
+          const applicationReviewChannel = interaction.client.channels.cache.get(applicationChannel[departments[choice]]);
+          applicationReviewChannel.send({ embeds: [applicationReviewMessage], components: [buttonList] });
+
+          interaction.reply({ content: "[CRP-Console]: Your application has been submitted!", ephemeral: true });
+        } catch (error) {
+          if (error instanceof DiscordjsTypeError) {
+            interaction.reply({ content: "Application was not submitted. Please resubmit your application. \n\nIf the issue persists, please contact a staff member by creating a support ticket.", ephemeral: true});
+            console.log("[CRP-Console]: DiscordjsTypeError error caught.");
+          }
         }
-
-        const applicationReviewMessage = new EmbedBuilder()
-          .setColor(0xD63129)
-          .setTitle(`New Application - ${departments[choice]}`)
-          .setThumbnail("https://i.ibb.co/p1K1yKd/Rogues-2021-Red-1.png")
-          .addFields(
-            { name: "Applicant Discord", value: interaction.user.toString() },
-            { name: "Applicant User ID", value: interaction.user.id },
-            { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[0], value: responses[0] },
-            { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[1], value: responses[1] },
-            { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[2], value: responses[2] },
-            { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[3], value: responses[3] },
-            { name: (modalSelector[choice].components.map(c => c.components[0].data.label))[4], value: responses[4] }
-          );
-
-        /* BUTTONS */
-
-        const buttonList = new ActionRowBuilder()
-          .addComponents(
-            new ButtonBuilder()
-              .setCustomId(`acceptApplication-${departments[choice]}-${interaction.user.toString()}`)
-              .setLabel("Approve")
-              .setEmoji("✔️")
-              .setStyle(ButtonStyle.Success),
-            
-            new ButtonBuilder()
-              .setCustomId(`denyApplication-${departments[choice]}-${interaction.user.toString()}`)
-              .setLabel("Deny")
-              .setEmoji("✖️")
-              .setStyle(ButtonStyle.Danger)
-          );
-
-        const applicationChannel = {
-          "TORONTO POLICE"       : TPS_APP_REVIEW_CHANNEL,
-          "OPP"                  : OPP_APP_REVIEW_CHANNEL,
-          "RCMP"                 : RCMP_APP_REVIEW_CHANNEL,
-          "TORONTO FIRE SERVICE" : TFS_APP_REVIEW_CHANNEL,
-          "STAFF"                : STAFF_APP_REVIEW_CHANNEL,
-          "BUSINESS"             : BUSINESS_APP_REVIEW_CHANNEL
-        };
-
-        const applicationReviewChannel = interaction.client.channels.cache.get(applicationChannel[departments[choice]]);
-        applicationReviewChannel.send({ embeds: [applicationReviewMessage], components: [buttonList] });
-
-        interaction.reply({ content: "[CRP-Console]: Your application has been submitted!", ephemeral: true });
       } else if (interaction.customId === "denyReasonInput") {
         const deniedReason = interaction.fields.getTextInputValue("denyReason");
 
