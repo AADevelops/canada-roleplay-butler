@@ -1,4 +1,4 @@
-const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, EmbedBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, EmbedBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError } = require("discord.js");
 const { TPS_APP_REVIEW_CHANNEL, OPP_APP_REVIEW_CHANNEL, RCMP_APP_REVIEW_CHANNEL, TFS_APP_REVIEW_CHANNEL, STAFF_APP_REVIEW_CHANNEL, BUSINESS_APP_REVIEW_CHANNEL, APPLICATION_RESULT_CHANNEL } = require("../config.json");
 const { TPS_ROLE, TPS_CADET, OPP_ROLE, OPP_CADET, RCMP_ROLE, RCMP_CADET, TFS_ROLE, TFS_CANDIDATE, STAFF_ROLE, STAFF_NI_ROLE, BUSINESS_ROLE, BUSINESS_RANK } = require("../config.json");
 
@@ -223,9 +223,6 @@ module.exports = {
             .setImage(acceptedImages[messagesSelector[buttonIdSplit[1]]])
             .setFooter({ text: "Copyright 2022 @ Canada Roleplay" });
 
-          interaction.reply("null");
-          interaction.deleteReply();
-
           const roleGiver = {
             "TORONTO POLICE"       : `${TPS_ROLE},${TPS_CADET}`,
             "OPP"                  : `${OPP_ROLE},${OPP_CADET}`,
@@ -235,17 +232,26 @@ module.exports = {
             "BUSINESS"             : `${BUSINESS_ROLE},${BUSINESS_RANK}`
           };
 
-          const acceptedMember = await interaction.guild.members.fetch(buttonIdSplit[2].substring(2, 20));
-          for (let key in roleGiver) {
-            if (key === buttonIdSplit[1]) {
-              const roles = roleGiver[key].split(",");
-              acceptedMember.roles.add(roles[0]);
-              acceptedMember.roles.add(roles[1]);
+          try {
+            const acceptedMember = await interaction.guild.members.fetch(buttonIdSplit[2].substring(2, 20));
+            for (let key in roleGiver) {
+              if (key === buttonIdSplit[1]) {
+                const roles = roleGiver[key].split(",");
+                acceptedMember.roles.add(roles[0]);
+                acceptedMember.roles.add(roles[1]);
+              }
+            }
+
+            interaction.reply("null");
+            interaction.deleteReply();
+
+            const applicationResultChannel = interaction.client.channels.cache.get(APPLICATION_RESULT_CHANNEL);
+            applicationResultChannel.send({ embeds: [applicationResultMessage] });
+          } catch (error) {
+            if (error instanceof DiscordAPIError) {
+              interaction.reply({ content: "[CRP-Console]: Unable to approve application: user left the server.", ephemeral: true });
             }
           }
-
-          const applicationResultChannel = interaction.client.channels.cache.get(APPLICATION_RESULT_CHANNEL);
-          applicationResultChannel.send({ embeds: [applicationResultMessage] });
         } else if (interaction.customId.includes("denyApplication")) {
           const denyReasonInput = new ModalBuilder()
             .setCustomId("denyReasonInput")
