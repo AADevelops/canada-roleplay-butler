@@ -250,6 +250,7 @@ module.exports = {
           } catch (error) {
             if (error instanceof DiscordAPIError) {
               interaction.reply({ content: "[CRP-Console]: Unable to approve application: user left the server.", ephemeral: true });
+              console.log(`[CRP-Console]: DiscordAPIError error caught. Error Message: \n\n${error}\n\n`);
             }
           }
         } else if (interaction.customId.includes("denyApplication")) {
@@ -323,7 +324,7 @@ module.exports = {
         } catch (error) {
           if (error instanceof DiscordjsTypeError) {
             interaction.reply({ content: "Application was not submitted. Please resubmit your application. \n\nIf the issue persists, please contact a staff member by creating a support ticket.", ephemeral: true});
-            console.log("[CRP-Console]: DiscordjsTypeError error caught.");
+            console.log(`[CRP-Console]: DiscordjsTypeError error caught. Error Message: \n\n${error}`);
           }
         }
       } else if (interaction.customId === "denyReasonInput") {
