@@ -212,7 +212,7 @@ module.exports = {
           "TORONTO FIRE SERVICE" : 3,
           "STAFF"                : 4,
           "BUSINESS"             : 5
-        }
+        };
 
         if (interaction.customId.includes("acceptApplication")) {
           var applicationResultMessage = new EmbedBuilder()
